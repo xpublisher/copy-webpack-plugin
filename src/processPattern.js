@@ -34,6 +34,7 @@ export default function processPattern(globalRef, pattern) {
         limit(() => {
           const file = {
             force: pattern.force,
+            append: pattern.append,
             absoluteFrom: path.resolve(pattern.context, from),
           };
 

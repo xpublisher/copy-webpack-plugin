@@ -1,7 +1,7 @@
 {
-  "name": "copy-webpack-plugin",
+  "name": "@xeditor/copy-webpack-plugin",
   "version": "5.0.4",
-  "description": "Copy files && directories with webpack",
+  "description": "Copy files && directories with webpack. This version also offers a append option.",
   "license": "MIT",
   "repository": "webpack-contrib/copy-webpack-plugin",
   "author": "Len Boyette",

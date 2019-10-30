@@ -73,7 +73,7 @@ module.exports = {
 |         [`cache`](#cache)         |  `{Boolean\|Object}`  |                     `false`                     | Enable `transform` caching. You can use `{ cache: { key: 'my-cache-key' } }` to invalidate the cache. |
 |     [`transform`](#transform)     | `{Function\|Promise}` |                   `undefined`                   | Allows to modify the file contents.                                                                   |
 | [`transformPath`](#transformpath) | `{Function\|Promise}` |                   `undefined`                   | Allows to modify the writing path.                                                                    |
-
+|        [`append`](#append)        |      `{Boolean}`      |                     `false`                     | Allows to append to existing content.                                                                    |
 #### `from`
 
 Type: `String\|Object`

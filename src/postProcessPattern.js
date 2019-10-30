@@ -179,11 +179,16 @@ export default function postProcessPattern(globalRef, pattern, file) {
         written[targetPath][targetAbsolutePath] = hash;
 
         if (compilation.assets[targetPath] && !file.force) {
-          logger.info(
-            `skipping '${file.webpackTo}', because it already exists`
-          );
-
-          return;
+          if (file.append) {
+            const asset = compilation.assets[file.webpackTo];
+            size += asset.size();
+            content = asset.source() + content;
+          } else {
+            logger.info(
+              `skipping '${file.webpackTo}', because it already exists`
+            );
+            return;
+          }
         }
 
         logger.info(
