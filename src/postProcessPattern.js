@@ -153,7 +153,7 @@ export default function postProcessPattern(globalRef, pattern, file) {
         return content;
       })
       .then((content) => {
-        const hash = loaderUtils.getHashDigest(content);
+        let hash = loaderUtils.getHashDigest(content);
         const targetPath = normalizePath(file.webpackTo);
         const targetAbsolutePath = normalizePath(file.absoluteFrom);
 
@@ -176,13 +176,13 @@ export default function postProcessPattern(globalRef, pattern, file) {
           written[targetPath] = {};
         }
 
-        written[targetPath][targetAbsolutePath] = hash;
-
+        let { size } = stats;
         if (compilation.assets[targetPath] && !file.force) {
           if (file.append) {
-            const asset = compilation.assets[file.webpackTo];
+            const asset = compilation.assets[targetPath];
             size += asset.size();
             content = asset.source() + content;
+            hash = loaderUtils.getHashDigest(content);
           } else {
             logger.info(
               `skipping '${file.webpackTo}', because it already exists`
@@ -191,13 +191,15 @@ export default function postProcessPattern(globalRef, pattern, file) {
           }
         }
 
+        written[targetPath][targetAbsolutePath] = hash;
+
         logger.info(
           `writing '${file.webpackTo}' to compilation assets from '${file.absoluteFrom}'`
         );
 
         compilation.assets[targetPath] = {
           size() {
-            return stats.size;
+            return size;
           },
           source() {
             return content;
