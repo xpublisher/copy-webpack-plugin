@@ -64,11 +64,10 @@ class CopyPlugin {
       }
 
       const { patterns } = this;
-
-      Promise.all(
-        patterns.map((pattern) =>
+      const handlePattern = (rawPattern) => {
+        return (
           Promise.resolve()
-            .then(() => preProcessPattern(globalRef, pattern))
+            .then(() => preProcessPattern(globalRef, rawPattern))
             // Every source (from) is assumed to exist here
             // eslint-disable-next-line no-shadow
             .then((pattern) =>
@@ -84,16 +83,37 @@ class CopyPlugin {
                 );
               })
             )
-        )
-      )
-        .catch((error) => {
-          compilation.errors.push(error);
-        })
-        .then(() => {
-          logger.debug('finishing emit');
+        );
+      };
 
-          callback();
-        });
+      if (this.options.sync) {
+        // handle sync
+        const handleNextPattern = () => {
+          const pattern = this.patterns.shift();
+          if (!pattern) {
+            logger.debug('finishing emit');
+            callback();
+            return;
+          }
+
+          handlePattern(pattern)
+            .then(handleNextPattern)
+            .catch((error) => {
+              compilation.errors.push(error);
+            });
+        };
+        handleNextPattern();
+      } else {
+        Promise.all(patterns.map((pattern) => handlePattern(pattern)))
+          .catch((error) => {
+            compilation.errors.push(error);
+          })
+          .then(() => {
+            logger.debug('finishing emit');
+
+            callback();
+          });
+      }
     });
     compiler.hooks.afterEmit.tapAsync(plugin, (compilation, callback) => {
       logger.debug('starting after-emit');
