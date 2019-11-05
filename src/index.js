@@ -64,6 +64,11 @@ class CopyPlugin {
       }
 
       const { patterns } = this;
+      if (patterns.length === 0) {
+        callback();
+        return;
+      }
+
       const handlePattern = (rawPattern) => {
         return (
           Promise.resolve()
@@ -88,10 +93,15 @@ class CopyPlugin {
 
       if (this.options.sync) {
         // handle sync
+        const updatePatterns = [...patterns];
         const handleNextPattern = () => {
-          const pattern = this.patterns.shift();
+          const pattern = updatePatterns.shift();
           if (!pattern) {
             logger.debug('finishing emit');
+
+            if (this.options.once) {
+              this.patterns = [];
+            }
             callback();
             return;
           }
@@ -110,7 +120,9 @@ class CopyPlugin {
           })
           .then(() => {
             logger.debug('finishing emit');
-
+            if (this.options.once) {
+              this.patterns = [];
+            }
             callback();
           });
       }

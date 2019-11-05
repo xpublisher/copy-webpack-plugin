@@ -161,7 +161,8 @@ export default function postProcessPattern(globalRef, pattern, file) {
           !copyUnmodified &&
           written[targetPath] &&
           written[targetPath][targetAbsolutePath] &&
-          written[targetPath][targetAbsolutePath] === hash
+          written[targetPath][targetAbsolutePath] === hash &&
+          !file.append
         ) {
           logger.info(
             `skipping '${file.webpackTo}', because content hasn't changed`
